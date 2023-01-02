@@ -23,7 +23,7 @@ public class SecurityConfig{
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
-                .loginPage("/login");  // 권한이 없는 접근은 모두 login 페이지로
+                .loginPage("/loginForm");  // 권한이 없는 접근은 모두 loginForm 페이지로
 
         return http.build();
     }

@@ -36,21 +36,21 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/user/**").authenticated() // 인증이 필요
+                .csrf().disable()// 세션을 사용하지 않고 JWT 토큰을 활용하여 진행, csrf토큰검사를 비활성화
+                .authorizeRequests() // 인증절차에 대한 설정 진행
+                .antMatchers("/user/**").authenticated()
+                // 다음 권한이 있는 사람만 들어가게 할 것임
                 .antMatchers("/manager/**").access("hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')")
-                // 위 권한이 있는 사람만 들어가게 할 것임!
                 .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
-                .anyRequest().permitAll()
+
+                .anyRequest().permitAll() // 나머지 url은 인증되지 않더라도 누구든 접근 가능
                 .and()
-                .formLogin()
-                .loginPage("/loginForm")  // 권한이 없는 접근은 모두 loginForm 페이지로
-                .loginProcessingUrl("/login") // login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인을 진행해줌.
+
+                .formLogin().loginPage("/loginForm")  // 접근이 차단된 페이지 클릭시 이동할 url
+                .loginProcessingUrl("/login") // '/login' 주소가 호출되면 시큐리티가 낚아채서 대신 로그인을 진행해줌.
                 .defaultSuccessUrl("/")
                 .and()
                 .oauth2Login()
-                .loginPage("/loginForm") // Tip. 코드x (엑세스토큰+사용자 프로필 정보O)
                 .userInfoEndpoint()
                 .userService(principalOauth2UserService);
 
